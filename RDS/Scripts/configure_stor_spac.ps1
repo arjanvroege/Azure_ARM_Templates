@@ -73,7 +73,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly -Name 1 -Value $wsman -PropertyType String -Force | Out-Null
 }
 
-Invoke-Command $clusternodes -Credential $cred {
+Invoke-Command $clusternodes -Credential $cred -ScriptBlock {
 	Write-Output 'Starting the installation of the Server Roles/Features' | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	Install-WindowsFeature Failover-Clustering -IncludeAllSubFeature -IncludeManagementTools
 	Install-WindowsFeature FS-FileServer,RSAT-AD-PowerShell
