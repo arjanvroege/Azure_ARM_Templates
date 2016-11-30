@@ -127,13 +127,14 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 	Start-Sleep -s 15
 
 	try {
-		Write-Output "Set ClusterResource on OU: $Using:stDomainOU" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
-
-		Import-Module ActiveDirectory
 		$computer        = Get-ADComputer $Using:stClsName 
 		$sid             = [System.Security.Principal.SecurityIdentifier] $computer.SID 
 		$pos             = $computer.DistinguishedName.IndexOf(",")
 		$stDomainOU      = $computer.DistinguishedName.Substring($pos+1)
+
+		Write-Output "Set ClusterResource on OU: $stDomainOU" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
+
+		Import-Module ActiveDirectory
 		$SysManObj       = [ADSI]("LDAP://$stDomainOU")
 		$identity        = [System.Security.Principal.IdentityReference] $SID
 		$adRights        = [System.DirectoryServices.ActiveDirectoryRights] "GenericAll"
