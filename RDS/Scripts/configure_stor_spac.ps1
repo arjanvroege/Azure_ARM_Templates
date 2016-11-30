@@ -159,7 +159,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 		Write-Output "Create SMB Share" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		$path = 'C:\ClusterStorage\Volume1\'+$Using:stSofsShare
 		$admin = $Using:FQDNDomain+'\Domain Admins'
-		$change = $Using:FQDNDomain+'\Authenticated Users'
+		$change = $Using:FQDNDomain+'\Domain Users'
 	
 		#Create the SMBShare
 		New-Item -Path $path -ItemType Directory
