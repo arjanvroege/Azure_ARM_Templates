@@ -1241,7 +1241,7 @@
         },
         "protectedSettings": {
           "storageAccountName": "rdscloudonlyscripting",
-          "storageAccountKey": "iAE73onNSmbH0/9MP5mkmUL+ntGxK9/RuHf66Iu2ZRh65+1vNVgwTihGHEYyC75Lgupwm1KnbPBTEsBA3CnEeQ=="
+          "storageAccountKey": ""
         }
       }
     }
