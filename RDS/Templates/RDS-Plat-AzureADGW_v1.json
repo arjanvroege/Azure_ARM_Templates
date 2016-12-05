@@ -13,42 +13,42 @@
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Resource Prefix used for naming the Storage Resources"
       }
     },
     "ClsName": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Cluster Name of the Storage Spaces Direct Cluster"
       }
     },
     "ClsStaticIP": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Cluster IP of the Storage Spaces Direct Cluster"
       }
     },
     "ClsSofsName": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Cluster Scale-out-File-Service Name of the Storage Spaces Direct Cluster"
       }
     },
     "ClsSofsShare": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Share Name of the SOFS share for the User Profiles Disks on the Storage Spaces Direct Cluster"
       }
     },
     "ClsSofsShareSize": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Resource Prefix used for naming the Resources"
+        "description": "Share size of the SOFS share for the User Profiles Disks on the Storage Spaces Direct Cluster"
       }
     },
     "adminUsername": {
@@ -95,7 +95,7 @@
       "minValue": 1,
       "defaultValue": 60,
       "metadata": {
-        "description": "Maximum User Profile Disk per user"
+        "description": "RDS Session Collection Idle Time"
       }
     },
     "CertifcatePFXName": {
@@ -112,7 +112,7 @@
     },
     "imageSKU": {
       "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
+      "defaultValue": "2016-Datacenter",
       "allowedValues": [
         "2012-R2-Datacenter",
         "2016-Datacenter",
@@ -137,7 +137,7 @@
         "Standard_D2_v2"
       ],
       "metadata": {
-        "description": "Size of the virtual machine, must be available in the virtual machine's location"
+        "description": "Size of the RDS virtual machines, must be available in the virtual machine's location"
       }
     },
     "vmSizeST": {
@@ -152,7 +152,7 @@
         "Standard_DS5_v2"
       ],
       "metadata": {
-        "description": "Size of the virtual machine, must be available in the virtual machine's location"
+        "description": "Size of the Storage Space Direct virtual machines, must be available in the virtual machine's location"
       }
     },
     "numberOfGWInstances": {
@@ -184,7 +184,7 @@
       "minValue": 1,
       "defaultValue": 2,
       "metadata": {
-        "description": "Number of SH Servers to be created"
+        "description": "Number of Storage Spaces Direct Servers to be created"
       }
     },
     "virtualNetworkName": {
@@ -281,7 +281,7 @@
         "P3"
       ],
       "metadata": {
-        "description": "Describes the performance level for Edition"
+        "description": "Describes the performance level for the database"
       }
     },
     "PremSTDiskSize": {
