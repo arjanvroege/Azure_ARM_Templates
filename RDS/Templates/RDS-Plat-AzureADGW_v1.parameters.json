@@ -61,6 +61,7 @@
     "PremSTDiskSize": { "value": 50 },
     "OSAutomaticUpdates": { "value": true },
     "OSTimeZone": { "value": "W. Europe Standard Time" },
-    "AssetStorageAccount": { "value": "<<STORAGE ACCOUNT NAME>>" }
+    "AssetStorageAccount": { "value": "<<STORAGE ACCOUNT NAME>>" },
+    "AssetStorageAccountKey": { "value": "<<STORAGE ACCOUNT KEY>>" }
   }
 }

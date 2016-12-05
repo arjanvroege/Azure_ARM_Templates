@@ -312,6 +312,13 @@
       "metadata": {
         "description": "The name of the created StorageAccount for hosting the certificate"
       }
+    },
+    "AssetStorageAccountKey": {
+      "type": "string",
+      "defaultValue": "None",
+      "metadata": {
+        "description": "The key of the created StorageAccount for hosting the certificate"
+      }
     }
   },
   "variables": {
@@ -1240,8 +1247,8 @@
           "commandToExecute": "[concat('powershell.exe -ExecutionPolicy bypass -File configure_rds_env.ps1 -FQDNDomain ', parameters('DomainFQDN'),' -Cred_User ', parameters('DomainJoinUserName'), ' -Cred_Psswd ', parameters('DomainJoinUserPassword'), ' -Pri_RDCB ', variables('vmNamePrefixCB'), '0 -Sec_RDCB ', variables('vmNamePrefixCB'), '1 -Pri_RDGW ', variables('vmNamePrefixGW'), '0 -Sec_RDGW ', variables('vmNamePrefixGW'), '1 -Pri_RDSH ', variables('vmNamePrefixSH'),'0 -Sec_RDSH ', variables('vmNamePrefixSH'), '1 -IPLBBroker ', parameters('IP-LoadBalander-Broker'),' -DBServer ',variables('vmNamePrefixSQL'),' -DBName ', variables('databaseName'),' -DBUser ', parameters('adminUsername'),' -DBPasswd ', parameters('adminPassword'), ' -RDBrokerDNS ', parameters('RDBrokerDNS'), ' -RDGatewayDNS ', parameters('RDGatewayDNS'), ' -CertifcatePFXName ', parameters('CertifcatePFXName'), ' -CertifcatePFXPassword ', parameters('CertifcatePFXPassword'), ' -RDSessionCollectionName ', parameters('RDSessionCollectionName'), ' -ClsSofsName ', parameters('ClsSofsName'), ' -ClsSofsShare ', parameters('ClsSofsShare'), ' -RDSessionCollectionUPDSize ', parameters('RDSessionCollectionUPDSize'), ' -RDSessionCollectionIdleSession ', parameters('RDSessionCollectionIdleSession'),' -FQDNDomainExt ', parameters('DomainFQDNExt') )]"
         },
         "protectedSettings": {
-          "storageAccountName": "rdscloudonlyscripting",
-          "storageAccountKey": ""
+          "storageAccountName": "[parameters('AssetStorageAccount')]",
+          "storageAccountKey": "[parameters('AssetStorageAccountKey')]"
         }
       }
     }
