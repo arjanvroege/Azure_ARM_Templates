@@ -1,0 +1,66 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ResourcePrefix": { "value": "RDSCO" },
+    "ResourcePrefixStorage": { "value": "RDSCO" },
+    "ClsName": { "value": "rdscls" },
+    "ClsStaticIP": { "value": "192.168.1.250" },
+    "ClsSofsName": { "value": "rdssofs" },
+    "ClsSofsShare": { "value": "updprod" },
+    "ClsSofsShareSize": { "value": "50" },
+    "adminUsername": { "value": "local_admin" },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/<<SUBSCRIPTION_ID>>/resourceGroups/<<RESOURCE_GROUP>>/providers/Microsoft.KeyVault/vaults/<<KEYVAULT_NAME>>"
+        },
+        "secretName": "localadminCO"
+      }
+    },
+    "RDBrokerDNS": { "value": "RDSFarm" },
+    "RDGatewayDNS": { "value": "rdgateway" },
+    "RDSessionCollectionName": { "value": "Production" },
+    "RDSessionCollectionUPDSize": { "value": 5 },
+    "RDSessionCollectionIdleSession": { "value": 30 },
+    "CertifcatePFXName": { "value": "<<CERTIFICATE FILENAME>>.pfx" },
+    "CertifcatePFXPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/<<SUBSCRIPTION_ID>>/resourceGroups/<<RESOURCE_GROUP>>/providers/Microsoft.KeyVault/vaults/<<KEYVAULT_NAME>>"
+        },
+        "secretName": "certificatepsswd"
+      }
+    },
+    "imageSKU": { "value": "2016-Datacenter" },
+    "vmSize": { "value": "Standard_D2_v2" },
+    "vmSizeST": { "value": "Standard_DS2_v2" },
+    "numberOfGWInstances": { "value": 2 },
+    "numberOfCBInstances": { "value": 2 },
+    "numberOfSHInstances": { "value": 2 },
+    "numberOfSTInstances": { "value": 2 },
+    "virtualNetworkName": { "value": "RDSCloudonly-ARM" },
+    "virtualNetworkRG": { "value": "RDSCloudonly" },
+    "IP-LoadBalander-Broker": { "value": "192.168.1.200" },
+    "IP-LoadBalander-Gateway": { "value": "192.168.1.201" },
+    "DomainJoinUserName": { "value": "svc_domainjoin" },
+    "DomainJoinUserPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/<<SUBSCRIPTION_ID>>/resourceGroups/<<RESOURCE_GROUP>>/providers/Microsoft.KeyVault/vaults/<<KEYVAULT_NAME>>"
+        },
+        "secretName": "domainjoinpsswd"
+      }
+    },
+    "DomainFQDN": { "value": "domain.tld" },
+    "DomainFQDNExt": { "value": "domain.tld" },
+    "SQLcollation": { "value": "SQL_Latin1_General_CP1_CI_AS" },
+    "SQLEdition": { "value": "Basic" },
+    "SQLrequestedServiceObjectiveName": { "value": "Basic" },
+    "SQLmaxSizeBytes": { "value": "1073741824" },
+    "PremSTDiskSize": { "value": 50 },
+    "OSAutomaticUpdates": { "value": true },
+    "OSTimeZone": { "value": "W. Europe Standard Time" },
+    "AssetStorageAccount": { "value": "<<STORAGE ACCOUNT NAME>>" }
+  }
+}
