@@ -3,8 +3,7 @@
     [string] [Parameter(Mandatory=$true)] $ResourceGroupName,
     [string] [Parameter(Mandatory=$true)] $TemplateFile,
     [string] [Parameter(Mandatory=$true)] $ParamatersFile,
-    [boolean] [Parameter(Mandatory=$true)] $Test,
-	[boolean] [Parameter(Mandatory=$true)] $Customer
+    [boolean] [Parameter(Mandatory=$true)] $Test
 )
 
 Login-AzureRmAccount
