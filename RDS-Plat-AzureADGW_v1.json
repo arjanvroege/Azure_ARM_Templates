@@ -1,0 +1,1251 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ResourcePrefix": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Resource Prefix used for naming the Resources"
+      }
+    },
+    "ResourcePrefixStorage": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Resource Prefix used for naming the Storage Resources"
+      }
+    },
+    "ClsName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Cluster Name of the Storage Spaces Direct Cluster"
+      }
+    },
+    "ClsStaticIP": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Cluster IP of the Storage Spaces Direct Cluster"
+      }
+    },
+    "ClsSofsName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Cluster Scale-out-File-Service Name of the Storage Spaces Direct Cluster"
+      }
+    },
+    "ClsSofsShare": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Share Name of the SOFS share for the User Profiles Disks on the Storage Spaces Direct Cluster"
+      }
+    },
+    "ClsSofsShareSize": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Share size of the SOFS share for the User Profiles Disks on the Storage Spaces Direct Cluster"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Admin username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password"
+      }
+    },
+    "RDBrokerDNS": {
+      "type": "string",
+      "metadata": {
+        "description": "RDS Broker FQDN"
+      }
+    },
+    "RDGatewayDNS": {
+      "type": "string",
+      "metadata": {
+        "description": "RDS Gateway FQDN"
+      }
+    },
+    "RDSessionCollectionName": {
+      "type": "string",
+      "metadata": {
+        "description": "RDS Session Collection name"
+      }
+    },
+    "RDSessionCollectionUPDSize": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "Maximum User Profile Disk per user"
+      }
+    },
+    "RDSessionCollectionIdleSession": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 60,
+      "metadata": {
+        "description": "RDS Session Collection Idle Time"
+      }
+    },
+    "CertifcatePFXName": {
+      "type": "string",
+      "metadata": {
+        "description": "Certificate PFX Name"
+      }
+    },
+    "CertifcatePFXPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Certificate PFX Password"
+      }
+    },
+    "imageSKU": {
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "allowedValues": [
+        "2012-R2-Datacenter",
+        "2016-Datacenter",
+        "2016-Nano-Server-Technical-Preview",
+        "2016-Technical-Preview-with-Containers",
+        "Windows-Server-Technical-Preview"
+      ],
+      "metadata": {
+        "description": "The Windows version for the VM"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Standard_D1_v2",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D1_v2",
+        "Standard_D2_v2"
+      ],
+      "metadata": {
+        "description": "Size of the RDS virtual machines, must be available in the virtual machine's location"
+      }
+    },
+    "vmSizeST": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Standard_DS1_v2",
+      "allowedValues": [
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2"
+      ],
+      "metadata": {
+        "description": "Size of the Storage Space Direct virtual machines, must be available in the virtual machine's location"
+      }
+    },
+    "numberOfGWInstances": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of GW Servers to be created (behind Load Balancer)"
+      }
+    },
+    "numberOfCBInstances": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of CB Servers to be created (behind Load Balancer)"
+      }
+    },
+    "numberOfSHInstances": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of SH Servers to be created"
+      }
+    },
+    "numberOfSTInstances": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of Storage Spaces Direct Servers to be created"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Virtual Network Name where to add the Resources to"
+      }
+    },
+    "virtualNetworkRG": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Virtual Network ResourceGroup where to add the Resources to"
+      }
+    },
+    "IP-LoadBalander-Broker": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "IP of the Azure Loadbalancer used for the RD Connection Broker"
+      }
+    },
+    "IP-LoadBalander-Gateway": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "IP of the Azure Loadbalancer used for the RD Gateway"
+      }
+    },
+    "DomainJoinUserName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Domain Join username"
+      }
+    },
+    "DomainJoinUserPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Domain Join password"
+      }
+    },
+    "DomainFQDN": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Domain FQDN"
+      }
+    },
+    "DomainFQDNExt": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "External Domain FQDN"
+      }
+    },
+    "SQLcollation": {
+      "type": "string",
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS",
+      "metadata": {
+        "description": "The database collation for governing the proper use of characters."
+      }
+    },
+    "SQLEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "The type of database to create."
+      }
+    },
+    "SQLmaxSizeBytes": {
+      "type": "string",
+      "defaultValue": "1073741824",
+      "metadata": {
+        "description": "The maximum size, in bytes, for the database"
+      }
+    },
+    "SQLrequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for the database"
+      }
+    },
+    "PremSTDiskSize": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 50,
+      "metadata": {
+        "description": "Disk Size of the Premium Storage disks"
+      }
+    },
+    "OSAutomaticUpdates": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable Automatic OS updates"
+      }
+    },
+    "OSTimeZone": {
+      "type": "string",
+      "defaultValue": "W. Europe Standard Time",
+      "metadata": {
+        "description": "The timezone of the deployed servers based on https://msdn.microsoft.com/en-us/library/ms912391(v=winembedded.11).aspx"
+      }
+    },
+    "AssetStorageAccount": {
+      "type": "string",
+      "defaultValue": "None",
+      "metadata": {
+        "description": "The name of the created StorageAccount for hosting the certificate"
+      }
+    }
+  },
+  "variables": {
+    "vmNamePrefixSH": "[concat(parameters('ResourcePrefix'), '-RDSH-')]",
+    "vmNamePrefixGW": "[concat(parameters('ResourcePrefix'), '-RDGW-')]",
+    "vmNamePrefixCB": "[concat(parameters('ResourcePrefix'), '-RDCB-')]",
+    "vmNamePrefixSQL": "[toLower(concat(parameters('ResourcePrefix'), '-SQL-1'))]",
+    "vmNamePrefixST": "[concat(parameters('ResourcePrefix'), '-RDST-')]",
+    "StdStoragePrefix": "[toLower(concat(parameters('ResourcePrefixStorage'),'std1'))]",
+    "PreStoragePrefix": "[toLower(concat(parameters('ResourcePrefixStorage'),'pre'))]",
+    "ClsStoragePrefix": "[toLower(concat(parameters('ResourcePrefixStorage'),'cls1'))]",
+    "StdStorageType": "Standard_LRS",
+    "PreStorageType": "Premium_LRS",
+    "databaseName": "RDCB",
+    "availabilitySetNameGW": "[concat(parameters('ResourcePrefix'), '-AV-RDGW')]",
+    "availabilitySetNameCB": "[concat(parameters('ResourcePrefix'), '-AV-RDCB')]",
+    "availabilitySetNameST": "[concat(parameters('ResourcePrefix'), '-AV-RDST')]",
+    "imagePublisher": "MicrosoftWindowsServer",
+    "imageOffer": "WindowsServer",
+    "vnetId": "[resourceId(parameters('virtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "virtualNetworkLANSubnetName": "LAN",
+    "LANsubnetRef": "[concat(variables('vnetId'), '/subnets/', variables('virtualNetworkLANSubnetName'))]",
+    "RDGW_loadBalancerName": "[concat(parameters('ResourcePrefix'), '-LB-RDGW')]",
+    "RDGW_lbId": "[resourceId('Microsoft.Network/loadBalancers', variables('RDGW_loadBalancerName'))]",
+    "RDBR_loadBalancerName": "[concat(parameters('ResourcePrefix'), '-LB-RDCB')]",
+    "RDBR_lbId": "[resourceId('Microsoft.Network/loadBalancers', variables('RDBR_loadBalancerName'))]",
+    "domainJoinOptions": 3,
+    "apiVersion": "2015-06-15",
+    "assetLocation": "https://raw.githubusercontent.com/arjanvroege/Azure_ARM_Templates/master/RDS/"
+  },
+  "resources": [
+    {
+      "name": "[variables('vmNamePrefixSQL')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "SqlServer"
+      },
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+        "administratorLogin": "[parameters('adminUsername')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[variables('databaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Database"
+          },
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[variables('vmNamePrefixSQL')]"
+          ],
+          "properties": {
+            "edition": "[parameters('SQLEdition')]",
+            "collation": "[parameters('SQLcollation')]",
+            "maxSizeBytes": "[parameters('SQLmaxSizeBytes')]",
+            "requestedServiceObjectiveName": "[parameters('SQLrequestedServiceObjectiveName')]"
+          }
+        },
+        {
+          "type": "firewallrules",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[variables('vmNamePrefixSQL')]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('StdStoragePrefix')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "StorageAccountStd"
+      },
+      "properties": {
+        "accountType": "[variables('StdStorageType')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('ClsStoragePrefix')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "StorageAccountCls"
+      },
+      "properties": {
+        "accountType": "[variables('StdStorageType')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[concat(variables('PreStoragePrefix'), copyIndex())]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "StorageAccountPre"
+      },
+      "copy": {
+        "name": "PreStorageLoop",
+        "count": "[parameters('numberOfSTInstances')]"
+      },
+      "properties": {
+        "accountType": "[variables('PreStorageType')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetNameCB')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "availabilitySetNameCB"
+      },
+      "properties": {
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetNameST')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "availabilitySetNameST"
+      },
+      "properties": {
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetNameGW')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "availabilitySetNameGW"
+      },
+      "properties": {
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmNamePrefixGW'), copyindex(),'-VNIC')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NetworkInterfacesGW"
+      },
+      "copy": {
+        "name": "nicLoopGW",
+        "count": "[parameters('numberOfGWInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('RDGW_loadBalancerName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('RDGW_lbId'), '/backendAddressPools/LBBackend')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmNamePrefixST'), copyindex(),'-VNIC')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NetworkInterfacesST"
+      },
+      "copy": {
+        "name": "nicLoopST",
+        "count": "[parameters('numberOfSTInstances')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmNamePrefixCB'), copyindex(),'-VNIC')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NetworkInterfacesCB"
+      },
+      "copy": {
+        "name": "nicLoopCB",
+        "count": "[parameters('numberOfCBInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('RDBR_loadBalancerName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('RDBR_lbId'), '/backendAddressPools/LBBackend')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmNamePrefixSH'), copyindex(), '-VNIC')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NetworkInterfacesSH"
+      },
+      "copy": {
+        "name": "nicLoopSH",
+        "count": "[parameters('numberOfSHInstances')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('RDGW_loadBalancerName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "LoadBalancerGW"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "properties": {
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              },
+              "privateIPAddress": "[parameters('IP-LoadBalander-Gateway')]",
+              "privateIPAllocationMethod": "Static"
+            },
+            "name": "LBFrontend"
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LBBackend"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDGW_loadBalancerName')), '/frontendIPConfigurations/LBFrontend')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDGW_loadBalancerName')), '/backendAddressPools/LBBackend')]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDGW_loadBalancerName')), '/probes/LBProbe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "SourceIPProtocol"
+            },
+            "name": "LBRule"
+          }
+        ],
+        "probes": [
+          {
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 15,
+              "numberOfProbes": 2
+            },
+            "name": "LBProbe"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('RDBR_loadBalancerName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "LoadBalancerCB"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "properties": {
+              "subnet": {
+                "id": "[variables('LANsubnetRef')]"
+              },
+              "privateIPAddress": "[parameters('IP-LoadBalander-Broker')]",
+              "privateIPAllocationMethod": "Static"
+            },
+            "name": "LBFrontend"
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LBBackend"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDBR_loadBalancerName')), '/frontendIPConfigurations/LBFrontend')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDBR_loadBalancerName')), '/backendAddressPools/LBBackend')]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('RDBR_loadBalancerName')), '/probes/LBProbe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 3389,
+              "backendPort": 3389,
+              "idleTimeoutInMinutes": 15
+            },
+            "name": "LBRule"
+          }
+        ],
+        "probes": [
+          {
+            "properties": {
+              "protocol": "Tcp",
+              "port": 3389,
+              "intervalInSeconds": 15,
+              "numberOfProbes": 2
+            },
+            "name": "LBProbe"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmNamePrefixGW'), copyindex())]",
+      "copy": {
+        "name": "RDGWvirtualMachineLoop",
+        "count": "[parameters('numberOfGWInstances')]"
+      },
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VirtualMachinesGW"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StdStoragePrefix'))]",
+        "nicLoopGW",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetNameGW'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetNameGW'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmNamePrefixGW'), copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": "[parameters('OSAutomaticUpdates')]",
+            "timeZone": "[parameters('OSTimeZone')]"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixGW'), copyIndex()), '_osdisk', copyindex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNamePrefixGW'), copyindex(),'-VNIC'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net')]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixGW'), copyindex(),'/joindomain')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixGW'), copyindex())]"
+          ],
+          "tags": {
+            "displayName": "JoinDomainGW"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "JsonADDomainExtension",
+            "typeHandlerVersion": "1.3",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "Name": "[parameters('DomainFQDN')]",
+              "User": "[concat(parameters('DomainJoinUserName'), '@' , parameters('DomainFQDN'))]",
+              "Restart": "true",
+              "Options": "[variables('domainJoinOptions')]"
+            },
+            "protectedsettings": {
+              "Password": "[parameters('DomainJoinUserPassword')]"
+            }
+          }
+        },
+        {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixGW'), copyindex(),'/InitialConfiguration')]",
+          "apiVersion": "[variables('apiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixGW'), copyindex())]",
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixGW'), copyindex(),'/extensions/joindomain')]"
+          ],
+          "tags": {
+            "displayName": "InitialServerConfiguration"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.7",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[concat(variables('assetlocation'),'/Scripts/srv_initial_conf.ps1')]"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file srv_initial_conf.ps1')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmNamePrefixCB'), copyindex())]",
+      "copy": {
+        "name": "virtualMachineLoop",
+        "count": "[parameters('numberOfCBInstances')]"
+      },
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VirtualMachinesCB"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StdStoragePrefix'))]",
+        "nicLoopCB",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetNameCB'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetNameCB'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmNamePrefixCB'), copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": "[parameters('OSAutomaticUpdates')]",
+            "timeZone": "[parameters('OSTimeZone')]"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixCB'), copyIndex()) ,'_osdisk', copyindex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNamePrefixCB'), copyindex(),'-VNIC'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net')]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixCB'), copyindex(),'/joindomain')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixCB'), copyindex())]"
+          ],
+          "tags": {
+            "displayName": "JoinDomainCB"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "JsonADDomainExtension",
+            "typeHandlerVersion": "1.3",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "Name": "[parameters('DomainFQDN')]",
+              "User": "[concat(parameters('DomainJoinUserName'), '@' , parameters('DomainFQDN'))]",
+              "Restart": "true",
+              "Options": "[variables('domainJoinOptions')]"
+            },
+            "protectedsettings": {
+              "Password": "[parameters('DomainJoinUserPassword')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmNamePrefixSH'), copyindex())]",
+      "copy": {
+        "name": "RDSHvirtualMachineLoop",
+        "count": "[parameters('numberOfSHInstances')]"
+      },
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VirtualMachinesSH"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StdStoragePrefix'))]",
+        "nicLoopSH"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmNamePrefixSH'), copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": "[parameters('OSAutomaticUpdates')]",
+            "timeZone": "[parameters('OSTimeZone')]"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixSH'), copyIndex()), '_osdisk', copyindex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNamePrefixSH'), copyindex(),'-VNIC'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net')]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixSH'), copyindex(),'/joindomain')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixSH'), copyindex())]"
+          ],
+          "tags": {
+            "displayName": "JoinDomainSH"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "JsonADDomainExtension",
+            "typeHandlerVersion": "1.3",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "Name": "[parameters('DomainFQDN')]",
+              "User": "[concat(parameters('DomainJoinUserName'), '@' , parameters('DomainFQDN'))]",
+              "Restart": "true",
+              "Options": "[variables('domainJoinOptions')]"
+            },
+            "protectedsettings": {
+              "Password": "[parameters('DomainJoinUserPassword')]"
+            }
+          }
+        },
+        {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixSH'), copyindex(),'/InitialConfiguration')]",
+          "apiVersion": "[variables('apiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixSH'), copyindex())]",
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixSH'), copyindex(),'/extensions/joindomain')]"
+          ],
+          "tags": {
+            "displayName": "InitialServerConfiguration"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.7",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[concat(variables('assetlocation'),'/Scripts/srv_initial_conf.ps1')]"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file srv_initial_conf.ps1')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmNamePrefixST'), copyindex())]",
+      "copy": {
+        "name": "RDSTvirtualMachineLoop",
+        "count": "[parameters('numberOfSTInstances')]"
+      },
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VirtualMachinesST"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StdStoragePrefix'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('PreStoragePrefix'), copyIndex() )]",
+        "nicLoopST"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSizeST')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmNamePrefixST'), copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": "[parameters('OSAutomaticUpdates')]",
+            "timeZone": "[parameters('OSTimeZone')]"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[parameters('PremSTDiskSize')]",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', concat(variables('PreStoragePrefix'), copyIndex()), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixST'), copyIndex()), '_datadisk1', '.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk2",
+              "diskSizeGB": "[parameters('PremSTDiskSize')]",
+              "lun": 1,
+              "vhd": {
+                "uri": "[concat('http://', concat(variables('PreStoragePrefix'), copyIndex()), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixST'), copyIndex()), '_datadisk2', '.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ],
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net/vhds/', concat(variables('vmNamePrefixST'), copyIndex()), '_osdisk', copyindex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNamePrefixST'), copyindex(),'-VNIC'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('http://', variables('StdStoragePrefix'), '.blob.core.windows.net')]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmNamePrefixST'), copyindex(),'/joindomain')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixST'), copyindex())]"
+          ],
+          "tags": {
+            "displayName": "JoinDomainST"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "JsonADDomainExtension",
+            "typeHandlerVersion": "1.3",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "Name": "[parameters('DomainFQDN')]",
+              "User": "[concat(parameters('DomainJoinUserName'), '@' , parameters('DomainFQDN'))]",
+              "Restart": "true",
+              "Options": "[variables('domainJoinOptions')]"
+            },
+            "protectedsettings": {
+              "Password": "[parameters('DomainJoinUserPassword')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmNamePrefixCB'), '1/InitialConfiguration')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixCB'),'1/extensions/joindomain')]"
+      ],
+      "tags": {
+        "displayName": "InitialServerConfigurationCB1"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(variables('assetlocation'),'/Scripts/srv_initial_conf.ps1')]"
+          ],
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file srv_initial_conf.ps1')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmNamePrefixST'), '1/InitialConfiguration')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixST'),'1/extensions/joindomain')]"
+      ],
+      "tags": {
+        "displayName": "InitialServerConfigurationST1"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(variables('assetlocation'),'/Scripts/srv_initial_conf.ps1')]"
+          ],
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file srv_initial_conf.ps1')]"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('vmNamePrefixST'), '0/ConfigureStorageSpaces')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixST'), '0/extensions/joindomain')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixST'), '1/extensions/InitialConfiguration')]"
+      ],
+      "tags": {
+        "displayName": "ConfigureSPDirect"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(variables('assetlocation'),'/Scripts/configure_stor_spac.ps1')]"
+          ],
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy bypass -File configure_stor_spac.ps1 -FQDNDomain ', parameters('DomainFQDN'),' -Cred_User ', parameters('DomainJoinUserName'), ' -Cred_Psswd ', parameters('DomainJoinUserPassword'), ' -stSofsName ', parameters('ClsSofsName'), ' -stprefix ', variables('vmNamePrefixST'), ' -AccountKey ', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('ClsStoragePrefix')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value , ' -StorageAccount ', variables('ClsStoragePrefix'), ' -stinstances ', parameters('numberOfSTInstances'), ' -StaticIP ', parameters('ClsStaticIP'), ' -stClsName ', parameters('ClsName'),' -stSofsShareSize ', parameters('ClsSofsShareSize'),' -stSofsShare ', parameters('ClsSofsShare') )]"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('vmNamePrefixCB'), '0/ConfigureRDSDeployment')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixGW'), '0/extensions/InitialConfiguration')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixSH'), '0/extensions/InitialConfiguration')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixCB'), '0/extensions/joindomain')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixGW'), '1/extensions/InitialConfiguration')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixSH'), '1/extensions/InitialConfiguration')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixCB'), '1/extensions/InitialConfiguration')]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefixST'), '0/extensions/ConfigureStorageSpaces')]"
+      ],
+      "tags": {
+        "displayName": "ConfigureRDS"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(variables('assetlocation'),'/Scripts/configure_rds_env.ps1')]",
+            "[concat('https://',parameters('AssetStorageAccount'),'.blob.core.windows.net/scripts/', parameters('CertifcatePFXName'))]"
+          ],
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy bypass -File configure_rds_env.ps1 -FQDNDomain ', parameters('DomainFQDN'),' -Cred_User ', parameters('DomainJoinUserName'), ' -Cred_Psswd ', parameters('DomainJoinUserPassword'), ' -Pri_RDCB ', variables('vmNamePrefixCB'), '0 -Sec_RDCB ', variables('vmNamePrefixCB'), '1 -Pri_RDGW ', variables('vmNamePrefixGW'), '0 -Sec_RDGW ', variables('vmNamePrefixGW'), '1 -Pri_RDSH ', variables('vmNamePrefixSH'),'0 -Sec_RDSH ', variables('vmNamePrefixSH'), '1 -IPLBBroker ', parameters('IP-LoadBalander-Broker'),' -DBServer ',variables('vmNamePrefixSQL'),' -DBName ', variables('databaseName'),' -DBUser ', parameters('adminUsername'),' -DBPasswd ', parameters('adminPassword'), ' -RDBrokerDNS ', parameters('RDBrokerDNS'), ' -RDGatewayDNS ', parameters('RDGatewayDNS'), ' -CertifcatePFXName ', parameters('CertifcatePFXName'), ' -CertifcatePFXPassword ', parameters('CertifcatePFXPassword'), ' -RDSessionCollectionName ', parameters('RDSessionCollectionName'), ' -ClsSofsName ', parameters('ClsSofsName'), ' -ClsSofsShare ', parameters('ClsSofsShare'), ' -RDSessionCollectionUPDSize ', parameters('RDSessionCollectionUPDSize'), ' -RDSessionCollectionIdleSession ', parameters('RDSessionCollectionIdleSession'),' -FQDNDomainExt ', parameters('DomainFQDNExt') )]"
+        },
+        "protectedSettings": {
+          "storageAccountName": "rdscloudonlyscripting",
+          "storageAccountKey": ""
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+} 
